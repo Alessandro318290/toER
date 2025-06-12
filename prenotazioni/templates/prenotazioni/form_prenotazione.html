@@ -29,7 +29,7 @@
                         {{ form.camera }}
                         
                         <div class="mb-3">
-                            <label for="{{ form.check_in_date.id_for_label }}" class="form-label">Check in date*</label>
+                            <label for="{{ form.check_in_date.id_for_label }}" class="form-label">Data check-in</label>
                             {{ form.check_in_date }}
                             {% if form.check_in_date.errors %}
                                 <div class="alert alert-danger">
@@ -39,7 +39,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="{{ form.check_out_date.id_for_label }}" class="form-label">Check out date*</label>
+                            <label for="{{ form.check_out_date.id_for_label }}" class="form-label">Data check-out</label>
                             {{ form.check_out_date }}
                             {% if form.check_out_date.errors %}
                                 <div class="alert alert-danger">
@@ -49,7 +49,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="{{ form.num_people.id_for_label }}" class="form-label">Number of people*</label>
+                            <label for="{{ form.num_people.id_for_label }}" class="form-label">Numero di persone</label>
                             {{ form.num_people }}
                             {% if form.num_people.errors %}
                                 <div class="alert alert-danger">

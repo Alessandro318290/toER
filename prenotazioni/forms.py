@@ -27,24 +27,26 @@ class BookingForm(forms.ModelForm):
         model = Booking
         fields = ['camera', 'check_in_date', 'check_out_date', 'num_people', 'notes']
         widgets = {
-            # Input date per check-in con data minima oggi
-            'check_in_date': forms.DateInput(attrs={
-                'type': 'date',
-                'min': timezone.localtime(timezone.now()).date().isoformat(),
-                'class': 'form-control'
-            }),
-            # Input date per check-out con data minima domani
-            'check_out_date': forms.DateInput(attrs={
-                'type': 'date',
-                'min': (timezone.localtime(timezone.now()).date() + timedelta(days=1)).isoformat(),
-                'class': 'form-control'
-            }),
-            # Input numerico per numero persone (minimo 1)
+            'check_in_date': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control',
+                    'min': timezone.localtime(timezone.now()).date().isoformat(),
+                }
+            ),
+            'check_out_date': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control',
+                    'min': (timezone.localtime(timezone.now()).date() + timedelta(days=1)).isoformat(),
+                }
+            ),
             'num_people': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'min': '1'
             }),
-            # Area di testo per note aggiuntive
             'notes': forms.Textarea(attrs={
                 'rows': 3,
                 'placeholder': 'Inserisci eventuali note o richieste speciali',
