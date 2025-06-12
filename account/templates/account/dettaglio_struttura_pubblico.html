@@ -1,0 +1,154 @@
+{% extends 'home.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar con filtri -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Filtri camere</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <!-- Mantieni i parametri originali della ricerca -->
+                        {% if check_in_date %}<input type="hidden" name="check_in_date" value="{{ check_in_date }}">{% endif %}
+                        {% if check_out_date %}<input type="hidden" name="check_out_date" value="{{ check_out_date }}">{% endif %}
+                        {% if num_people %}<input type="hidden" name="num_people" value="{{ num_people }}">{% endif %}
+
+                        <!-- Prezzo -->
+                        <div class="mb-3">
+                            <label class="form-label">Prezzo per notte</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    {{ filter_form.min_prezzo }}
+                                </div>
+                                <div class="col-6">
+                                    {{ filter_form.max_prezzo }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Numero persone -->
+                        <div class="mb-3">
+                            <label class="form-label">Numero persone</label>
+                            {{ filter_form.numero_persone }}
+                        </div>
+
+                        <!-- Servizi -->
+                        <div class="mb-3">
+                            <label class="form-label">Servizi</label>
+                            <div class="form-check">
+                                {{ filter_form.bagno_privato }}
+                                <label class="form-check-label" for="{{ filter_form.bagno_privato.id_for_label }}">
+                                    Bagno privato
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                {{ filter_form.aria_condizionata }}
+                                <label class="form-check-label" for="{{ filter_form.aria_condizionata.id_for_label }}">
+                                    Aria condizionata
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                {{ filter_form.wifi }}
+                                <label class="form-check-label" for="{{ filter_form.wifi.id_for_label }}">
+                                    WiFi
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                {{ filter_form.tv }}
+                                <label class="form-check-label" for="{{ filter_form.tv.id_for_label }}">
+                                    TV
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                {{ filter_form.balcone }}
+                                <label class="form-check-label" for="{{ filter_form.balcone.id_for_label }}">
+                                    Balcone
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                {{ filter_form.letto_matrimoniale }}
+                                <label class="form-check-label" for="{{ filter_form.letto_matrimoniale.id_for_label }}">
+                                    Letto matrimoniale
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                {{ filter_form.accessibile_disabili }}
+                                <label class="form-check-label" for="{{ filter_form.accessibile_disabili.id_for_label }}">
+                                    Accessibile disabili
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Ordinamento -->
+                        <div class="mb-3">
+                            <label class="form-label">Ordina per</label>
+                            {{ filter_form.ordina_per }}
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-filter"></i> Applica filtri
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista camere -->
+        <div class="col-md-9">
+            {% if camere %}
+  <div class="row">
+    {% for camera in camere %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+          {% if camera.immagine %}
+                                <img src="{{ camera.immagine.url }}" class="card-img-top" alt="Camera {{ camera.numero_camera }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">Camera {{ camera.numero_camera }}</h5>
+                                <p class="card-text">
+                                    <strong>Prezzo:</strong> {{ camera.prezzo_per_notte }} €/notte<br>
+                                    <strong>Persone:</strong> {{ camera.numero_persone }}
+                                </p>
+                                <div class="mb-3">
+                                    {% if camera.bagno_privato %}
+                                    <span class="badge bg-info me-1">Bagno privato</span>
+                                    {% endif %}
+                                    {% if camera.aria_condizionata %}
+                                    <span class="badge bg-info me-1">Aria condizionata</span>
+                                    {% endif %}
+                                    {% if camera.wifi %}
+                                    <span class="badge bg-info me-1">WiFi</span>
+                                    {% endif %}
+                                    {% if camera.tv %}
+                                    <span class="badge bg-info me-1">TV</span>
+                                    {% endif %}
+                                    {% if camera.balcone %}
+                                    <span class="badge bg-info me-1">Balcone</span>
+                                    {% endif %}
+                                    {% if camera.letto_matrimoniale %}
+                                    <span class="badge bg-info me-1">Letto matrimoniale</span>
+                                    {% endif %}
+                                    {% if camera.accessibile_disabili %}
+                                    <span class="badge bg-info">Accessibile disabili</span>
+                                    {% endif %}
+                                </div>
+                                <p class="card-text">{{ camera.descrizione|truncatewords:30 }}</p>
+                                <a href="{% url 'account:dettaglio_camera_pubblico' camera.id %}?check_in_date={{ check_in_date }}&check_out_date={{ check_out_date }}&num_people={{ num_people }}" class="btn btn-outline-success w-100">
+                                    Dettagli e prenotazione
+                                </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    Nessuna camera disponibile con i criteri selezionati.
+                </div>
+            {% endif %}
+        </div>
+  </div>
+</div>
+{% endblock %}

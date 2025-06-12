@@ -1,0 +1,116 @@
+{% extends 'home.html' %}
+
+{% block title %}Modifica profilo - ToER{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header {% if user.is_gestore %}bg-primary{% else %}bg-success{% endif %} text-white">
+                <h4 class="mb-0">Modifica profilo</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <h5 class="mb-3">Informazioni Personali</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ user_form.nome.id_for_label }}" class="form-label">Nome</label>
+                            {{ user_form.nome }}
+                            {% if user_form.nome.errors %}
+                                <div class="text-danger">{{ user_form.nome.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ user_form.cognome.id_for_label }}" class="form-label">Cognome</label>
+                            {{ user_form.cognome }}
+                            {% if user_form.cognome.errors %}
+                                <div class="text-danger">{{ user_form.cognome.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ user_form.telefono.id_for_label }}" class="form-label">Telefono</label>
+                        {{ user_form.telefono }}
+                        {% if user_form.telefono.errors %}
+                            <div class="text-danger">{{ user_form.telefono.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if user.is_gestore %}
+                        <h5 class="mb-3 mt-4">Informazioni Attività</h5>
+                        <div class="mb-3">
+                            <label for="{{ profile_form.partita_iva.id_for_label }}" class="form-label">Partita IVA</label>
+                            {{ profile_form.partita_iva }}
+                            {% if profile_form.partita_iva.errors %}
+                                <div class="text-danger">{{ profile_form.partita_iva.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ profile_form.denominazione_sociale.id_for_label }}" class="form-label">Denominazione Sociale</label>
+                            {{ profile_form.denominazione_sociale }}
+                            {% if profile_form.denominazione_sociale.errors %}
+                                <div class="text-danger">{{ profile_form.denominazione_sociale.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ profile_form.indirizzo_sede.id_for_label }}" class="form-label">Indirizzo Sede</label>
+                            {{ profile_form.indirizzo_sede }}
+                            {% if profile_form.indirizzo_sede.errors %}
+                                <div class="text-danger">{{ profile_form.indirizzo_sede.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ profile_form.immagini.id_for_label }}" class="form-label">Aggiungi Immagini</label>
+                            {{ profile_form.immagini }}
+                            {% if profile_form.immagini.errors %}
+                                <div class="text-danger">{{ profile_form.immagini.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">{{ profile_form.immagini.help_text }}</div>
+                        </div>
+                    {% else %}
+                        <h5 class="mb-3 mt-4">Informazioni Aggiuntive</h5>
+                        <div class="mb-3">
+                            <label for="{{ profile_form.indirizzo.id_for_label }}" class="form-label">Indirizzo</label>
+                            {{ profile_form.indirizzo }}
+                            {% if profile_form.indirizzo.errors %}
+                                <div class="text-danger">{{ profile_form.indirizzo.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ profile_form.citta.id_for_label }}" class="form-label">Città</label>
+                            {{ profile_form.citta }}
+                            {% if profile_form.citta.errors %}
+                                <div class="text-danger">{{ profile_form.citta.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ profile_form.data_nascita.id_for_label }}" class="form-label">Data di nascita</label>
+                            {{ profile_form.data_nascita }}
+                            {% if profile_form.data_nascita.errors %}
+                                <div class="text-danger">{{ profile_form.data_nascita.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn {% if user.is_gestore %}btn-primary{% else %}btn-success{% endif %}">Salva modifiche</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'account:profile' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Torna al profilo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

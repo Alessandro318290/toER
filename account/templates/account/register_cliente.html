@@ -1,0 +1,107 @@
+{% extends 'home.html' %}
+
+{% block title %}Registrazione Cliente - ToER{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Registrazione Cliente</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <h5 class="mb-3">Informazioni Personali</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.nome.id_for_label }}" class="form-label">Nome *</label>
+                            {{ form.nome }}
+                            {% if form.nome.errors %}
+                                <div class="text-danger">{{ form.nome.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.cognome.id_for_label }}" class="form-label">Cognome *</label>
+                            {{ form.cognome }}
+                            {% if form.cognome.errors %}
+                                <div class="text-danger">{{ form.cognome.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.telefono.id_for_label }}" class="form-label">Telefono</label>
+                        {{ form.telefono }}
+                        {% if form.telefono.errors %}
+                            <div class="text-danger">{{ form.telefono.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <h5 class="mb-3 mt-4">Informazioni Aggiuntive</h5>
+                    <div class="mb-3">
+                        <label for="{{ form.indirizzo.id_for_label }}" class="form-label">Indirizzo</label>
+                        {{ form.indirizzo }}
+                        {% if form.indirizzo.errors %}
+                            <div class="text-danger">{{ form.indirizzo.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.citta.id_for_label }}" class="form-label">Città</label>
+                        {{ form.citta }}
+                        {% if form.citta.errors %}
+                            <div class="text-danger">{{ form.citta.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.data_nascita.id_for_label }}" class="form-label">Data di nascita</label>
+                        {{ form.data_nascita }}
+                        {% if form.data_nascita.errors %}
+                            <div class="text-danger">{{ form.data_nascita.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <h5 class="mb-3 mt-4">Password</h5>
+                    <div class="mb-3">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">Password *</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <div class="text-danger">{{ form.password1.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">
+                            La password deve contenere almeno 8 caratteri, lettere e numeri.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">Conferma Password *</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="text-danger">{{ form.password2.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Registrati come Cliente</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <p class="mb-0">Hai già un account? <a href="{% url 'account:login' %}">Accedi</a></p>
+                <p class="mb-0 mt-2">Sei un gestore? <a href="{% url 'account:register_gestore' %}">Registrati come gestore</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

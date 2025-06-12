@@ -1,0 +1,36 @@
+{% extends 'home.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Modifica Prenotazione</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Camera {{ prenotazione.camera.numero_camera }} - {{ prenotazione.camera.struttura.nome }}</h5>
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <div class="form-text">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="alert alert-danger">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salva modifiche
+                    </button>
+                    <a href="{% url 'prenotazioni:lista_prenotazioni' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Annulla
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

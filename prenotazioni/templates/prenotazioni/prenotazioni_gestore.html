@@ -1,0 +1,148 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Gestione Prenotazioni - ToER{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link {% if not status %}active{% endif %}" href="{% url 'prenotazioni:prenotazioni_gestore' %}">
+                            <i class="bi bi-house-door"></i>
+                            Tutte le prenotazioni
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if status == 'pending' %}active{% endif %}" href="{% url 'prenotazioni:prenotazioni_gestore' %}?status=pending">
+                            <i class="bi bi-clock"></i>
+                            In attesa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if status == 'approved' %}active{% endif %}" href="{% url 'prenotazioni:prenotazioni_gestore' %}?status=approved">
+                            <i class="bi bi-check-circle"></i>
+                            Approvate
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if status == 'checked_in' %}active{% endif %}" href="{% url 'prenotazioni:prenotazioni_gestore' %}?status=checked_in">
+                            <i class="bi bi-door-open"></i>
+                            Check-in effettuati
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if status == 'checked_out' %}active{% endif %}" href="{% url 'prenotazioni:prenotazioni_gestore' %}?status=checked_out">
+                            <i class="bi bi-door-open"></i>
+                            Check-out effettuati
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard Prenotazioni</h1>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">In Attesa</h5>
+                            <p class="card-text display-6">{{ stats.pending }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h5 class="card-title">Check-in Oggi</h5>
+                            <p class="card-text display-6">{{ stats.checkin_today }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <h5 class="card-title">Check-out Oggi</h5>
+                            <p class="card-text display-6">{{ stats.checkout_today }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <h5 class="card-title">Lista d'Attesa</h5>
+                            <p class="card-text display-6">{{ stats.waiting_list }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prenotazioni Table -->
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Camera</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Stato</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prenotazione in prenotazioni %}
+                        <tr>
+                            <td>{{ prenotazione.user.email }}</td>
+                            <td>{{ prenotazione.camera.numero_camera }} - {{ prenotazione.camera.struttura.nome }}</td>
+                            <td>{{ prenotazione.check_in_date|date:"d/m/Y" }}</td>
+                            <td>{{ prenotazione.check_out_date|date:"d/m/Y" }}</td>
+                            <td>
+                                <span class="badge {% if prenotazione.status == 'pending' %}bg-warning{% elif prenotazione.status == 'approved' %}bg-success{% elif prenotazione.status == 'checked_in' %}bg-info{% elif prenotazione.status == 'checked_out' %}bg-secondary{% elif prenotazione.status == 'cancelled' %}bg-danger{% endif %}">
+                                    {{ prenotazione.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if prenotazione.status == 'pending' %}
+                                <form method="post" action="{% url 'prenotazioni:gestisci_prenotazione' prenotazione.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="azione" value="approva">
+                                    <button type="submit" class="btn btn-success btn-sm">Approva</button>
+                                </form>
+                                <form method="post" action="{% url 'prenotazioni:gestisci_prenotazione' prenotazione.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="azione" value="rifiuta">
+                                    <button type="submit" class="btn btn-danger btn-sm">Rifiuta</button>
+                                </form>
+                                {% elif prenotazione.status == 'approved' %}
+                                <form method="post" action="{% url 'prenotazioni:gestisci_prenotazione' prenotazione.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="azione" value="check_in">
+                                    <button type="submit" class="btn btn-primary btn-sm">Check-in</button>
+                                </form>
+                                {% elif prenotazione.status == 'checked_in' %}
+                                <form method="post" action="{% url 'prenotazioni:gestisci_prenotazione' prenotazione.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="azione" value="check_out">
+                                    <button type="submit" class="btn btn-info btn-sm">Check-out</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

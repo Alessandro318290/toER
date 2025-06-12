@@ -1,0 +1,76 @@
+{% extends 'home.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Lista d'attesa e Notifiche</h2>
+
+    <!-- Notifiche -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Notifiche</h3>
+        </div>
+        <div class="card-body">
+            {% if notifications %}
+                <div class="list-group">
+                    {% for notification in notifications %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ notification.message }}</h5>
+                                <small>{{ notification.created_at|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            <div class="mt-2">
+                                <form method="post" action="{% url 'mark_notification_as_read' notification.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success">Segna come letta</button>
+                                </form>
+                                {% if notification.waiting_list %}
+                                    <a href="{% url 'prenota' notification.waiting_list.camera.id %}" class="btn btn-sm btn-primary">Prenota ora</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Non hai notifiche non lette.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Lista d'attesa attiva -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Le tue richieste in lista d'attesa</h3>
+        </div>
+        <div class="card-body">
+            {% if waiting_list_entries %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Struttura</th>
+                                <th>Camera</th>
+                                <th>Data</th>
+                                <th>Numero persone</th>
+                                <th>Data richiesta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in waiting_list_entries %}
+                                <tr>
+                                    <td>{{ entry.camera.struttura.nome }}</td>
+                                    <td>Camera {{ entry.camera.numero_camera }}</td>
+                                    <td>{{ entry.date|date:"d/m/Y" }}</td>
+                                    <td>{{ entry.num_people }}</td>
+                                    <td>{{ entry.created_at|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>Non hai richieste attive in lista d'attesa.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

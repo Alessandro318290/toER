@@ -1,0 +1,26 @@
+{% extends 'home.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="alert alert-warning">
+        <h4 class="alert-heading">Camera non disponibile</h4>
+        <p>La camera {{ camera.numero_camera }} presso {{ camera.struttura.nome }} non è disponibile per la data {{ data }}.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Vuoi essere notificato quando la camera diventa disponibile?</h5>
+            <p class="card-text">Ti invieremo una notifica non appena la camera si libera per la data selezionata.</p>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="waiting_list" value="1">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-bell"></i> Mettimi in lista d'attesa
+                </button>
+                <a href="{% url 'home' %}" class="btn btn-secondary">
+                    <i class="fas fa-search"></i> Cerca altre camere
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

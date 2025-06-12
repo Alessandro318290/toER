@@ -1,0 +1,7 @@
+Django>=5.2.1
+Pillow>=10.0.0  # Per la gestione delle immagini
+python-dotenv>=1.0.0  # Per la gestione delle variabili d'ambiente
+django-crispy-forms>=2.1  # Per migliorare il rendering dei form
+django-filter>=23.5  # Per il sistema di filtri avanzati
+django-cleanup>=8.0.0  # Per la pulizia automatica dei file media
+whitenoise>=6.6.0  # Per servire file statici in produzione 

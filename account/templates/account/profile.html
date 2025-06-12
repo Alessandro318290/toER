@@ -1,0 +1,54 @@
+{% extends 'home.html' %}
+
+{% block title %}Profilo - ToER{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header {% if user.is_gestore %}bg-primary{% else %}bg-success{% endif %} text-white">
+                <h4 class="mb-0">Il tuo profilo</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9">
+                        <h4>{{ user.nome }} {{ user.cognome }}</h4>
+                        <p class="text-muted">{{ user.get_user_type_display }}</p>
+                        
+                        <h5 class="mt-4">Informazioni di contatto</h5>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Telefono:</strong> {{ user.telefono|default:"Non specificato" }}</p>
+                        
+                        {% if user.is_gestore %}
+                            <h5 class="mt-4">Informazioni Attività</h5>
+                            <p><strong>Partita IVA:</strong> {{ user.gestore_profile.partita_iva }}</p>
+                            <p><strong>Denominazione Sociale:</strong> {{ user.gestore_profile.denominazione_sociale }}</p>
+                            <p><strong>Indirizzo Sede:</strong> {{ user.gestore_profile.indirizzo_sede }}</p>
+                        {% else %}
+                            <h5 class="mt-4">Informazioni Aggiuntive</h5>
+                            <p><strong>Indirizzo:</strong> {{ user.cliente_profile.indirizzo|default:"Non specificato" }}</p>
+                            <p><strong>Città:</strong> {{ user.cliente_profile.citta|default:"Non specificata" }}</p>
+                            <p><strong>Data di nascita:</strong> {{ user.cliente_profile.data_nascita|date:"d/m/Y"|default:"Non specificata" }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'account:profile' %}?edit=1" class="btn btn-primary">
+                    <i class="bi bi-pencil"></i> Modifica Profilo
+                </a>
+                {% if user.is_gestore %}
+                    <a href="{% url 'account:dashboard_gestore' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Torna alla dashboard
+                    </a>
+                {% else %}
+                    <a href="{% url 'account:dashboard_cliente' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Vai alla dashboard
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

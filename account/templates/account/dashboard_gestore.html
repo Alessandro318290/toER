@@ -1,0 +1,188 @@
+{% extends 'home.html' %}
+
+{% block title %}Dashboard Gestore - ToER{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2>Dashboard Gestore</h2>
+        <p class="lead">Benvenuto nella tua area personale, {{ user.nome }}!</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="list-group">
+            <a href="{% url 'account:dashboard_gestore' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="{% url 'prenotazioni:prenotazioni_gestore' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-calendar-check"></i> Prenotazioni
+            </a>
+            <a href="{% url 'account:profile' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-person"></i> Il mio profilo
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Promemoria</h5>
+            </div>
+            <div class="card-body">
+                <p>Per iniziare ad utilizzare ToER come gestore, segui questi passaggi:</p>
+                <ol>
+                    <li>Aggiungi una nuova struttura dalla sezione "Le mie strutture"</li>
+                    <li>Aggiungi foto e una descrizione dettagliata della tua struttura</li>
+                    <li>Configura il numero di camere disponibili e i relativi prezzi</li>
+                </ol>
+                <p>Una volta completati questi passaggi, la tua struttura sarà visibile a tutti gli utenti!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2>Le tue strutture</h2>
+<a href="{% url 'account:aggiungi_struttura' %}" class="btn btn-primary mb-3">Aggiungi nuova struttura</a>
+<style>
+  .struttura-card {
+    display: flex;
+    align-items: flex-start;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 32px;
+    padding: 24px 32px;
+    transition: box-shadow 0.2s;
+  }
+  .struttura-card:hover {
+    box-shadow: 0 4px 16px rgba(25,135,84,0.10);
+    border-color: #198754;
+  }
+  .struttura-img {
+    width: 160px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 32px;
+    border: 1px solid #e9ecef;
+    background: #f8f9fa;
+  }
+  .struttura-info h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #198754;
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+  .struttura-info p {
+    margin-bottom: 6px;
+    font-size: 1rem;
+  }
+  .struttura-info strong {
+    font-weight: 600;
+  }
+  .camere-list {
+    margin-top: 18px;
+    padding-left: 0;
+    list-style: none;
+  }
+  .camere-list li {
+    margin-bottom: 10px;
+    padding: 10px 0 10px 0;
+    border-bottom: 1px solid #f1f1f1;
+    display: flex;
+    align-items: center;
+  }
+  .camere-list img {
+    width: 48px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 14px;
+    border: 1px solid #e9ecef;
+    background: #f8f9fa;
+  }
+  .camere-list strong {
+    color: #198754;
+    margin-right: 8px;
+  }
+  .toggle-link {
+    color: #198754;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+</style>
+{% for info in strutture_info %}
+  <div class="struttura-card">
+    {% if info.struttura.immagine %}
+      <img src="{{ info.struttura.immagine.url }}" alt="Immagine struttura" class="struttura-img">
+    {% endif %}
+    <div class="struttura-info" style="flex:1;">
+      <h3>
+        <a class="toggle-link" href="{% url 'account:dettaglio_struttura' info.struttura.id %}">
+          {{ info.struttura.nome }}
+        </a>
+        <!-- Pulsante elimina struttura -->
+        <form method="post" action="{% url 'account:elimina_struttura' info.struttura.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Eliminare questa struttura e tutte le sue camere?');">
+            Elimina Struttura
+          </button>
+        </form>
+      </h3>
+      <p><strong>Città:</strong> {{ info.struttura.citta }}</p>
+      <p><strong>Tipologia:</strong> {{ info.struttura.get_tipologia_display }}</p>
+      <p><strong>Indirizzo:</strong> {{ info.struttura.indirizzo }}</p>
+      <p><strong>Parcheggio:</strong> {{ info.struttura.parcheggio|yesno:"Sì,No" }}</p>
+      <p><strong>Piscina:</strong> {{ info.struttura.piscina|yesno:"Sì,No" }}</p>
+      <p><strong>Ristorante:</strong> {{ info.struttura.ristorante|yesno:"Sì,No" }}</p>
+      <p><strong>Animali ammessi:</strong> {{ info.struttura.animali_ammessi|yesno:"Sì,No" }}</p>
+      <p>
+        <strong>Camere disponibili:</strong> {{ info.camere_disponibili }} /
+        <strong>Non disponibili:</strong> {{ info.camere_non_disponibili }}
+      </p>
+      <div id="camere-{{ info.struttura.id }}" style="display:none;">
+        <h5 style="margin-top:18px;">Camere</h5>
+        <ul class="camere-list">
+          {% for camera in info.struttura.camere.all %}
+            <li>
+              {% if camera.immagine %}
+                <img src="{{ camera.immagine.url }}" alt="Immagine camera">
+              {% endif %}
+              <strong>Camera {{ camera.numero_camera }}</strong>
+              {{ camera.numero_persone }} persone,
+              {{ camera.prezzo_per_notte }} €/notte,
+              Disponibile: {{ camera.disponibilita|yesno:"Sì,No" }}
+              <!-- Pulsante elimina camera -->
+              <form method="post" action="{% url 'account:elimina_camera' camera.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Eliminare questa camera?');">
+                  Elimina Camera
+                </button>
+              </form>
+            </li>
+          {% empty %}
+            <li>Nessuna camera inserita.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <p>Nessuna struttura inserita.</p>
+{% endfor %}
+<script>
+  function toggleCamere(id) {
+    var el = document.getElementById(id);
+    if (el.style.display === "none") {
+      el.style.display = "block";
+    } else {
+      el.style.display = "none";
+    }
+  }
+</script>
+{% endblock %}

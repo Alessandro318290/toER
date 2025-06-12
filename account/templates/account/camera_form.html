@@ -1,0 +1,66 @@
+{% extends "home.html" %}
+{% block content %}
+<style>
+    .camera-form-container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+      padding: 36px 48px;
+    }
+    .camera-form-container h2 {
+      margin-bottom: 28px;
+      color: #198754;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .camera-form-block {
+      border: 1px solid #dee2e6;
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin-bottom: 22px;
+      background: #f8f9fa;
+      transition: box-shadow 0.2s;
+    }
+    .camera-form-block:hover {
+      box-shadow: 0 2px 8px rgba(25,135,84,0.08);
+      border-color: #198754;
+    }
+    .camera-form-container button[type="submit"] {
+      margin-top: 16px;
+      min-width: 160px;
+      font-weight: 600;
+      background: #198754;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 0;
+      transition: background 0.2s;
+    }
+    .camera-form-container button[type="submit"]:hover {
+      background: #146c43;
+    }
+    .camera-form-container a {
+      display: inline-block;
+      margin-top: 22px;
+      color: #198754;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+</style>
+<div class="camera-form-container">
+  <h2>Aggiungi camere per {{ struttura.nome }}</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    {% for camera_form in formset %}
+      <div class="camera-form-block">
+        {{ camera_form.as_p }}
+      </div>
+    {% endfor %}
+    <button type="submit">Salva camere</button>
+  </form>
+  <a href="{% url 'account:dashboard_gestore' %}">Torna alla dashboard</a>
+</div>
+{% endblock %}

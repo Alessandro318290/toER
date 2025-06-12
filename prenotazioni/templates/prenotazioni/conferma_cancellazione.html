@@ -1,0 +1,37 @@
+{% extends 'home.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="card-title mb-0">Conferma cancellazione</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Sei sicuro di voler cancellare questa prenotazione?</p>
+                    
+                    <div class="alert alert-info">
+                        <strong>Dettagli prenotazione:</strong><br>
+                        Check-in: {{ prenotazione.check_in_date|date:"d/m/Y" }}<br>
+                        Check-out: {{ prenotazione.check_out_date|date:"d/m/Y" }}<br>
+                        Numero persone: {{ prenotazione.num_people }}
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'prenotazioni:lista_prenotazioni' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Annulla
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Conferma cancellazione
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

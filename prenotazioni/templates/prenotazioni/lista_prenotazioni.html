@@ -1,0 +1,139 @@
+{% extends 'home.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{% if user.gestore %}Gestione prenotazioni{% else %}Le tue prenotazioni{% endif %}</h2>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if prenotazioni %}
+        <div class="row">
+            {% for prenotazione in prenotazioni %}
+                <div class="col-md-6 mb-3">
+                    <div class="card {% if prenotazione.status == 'pending' %}border-warning{% elif prenotazione.status == 'approved' %}border-success{% elif prenotazione.status == 'rejected' %}border-danger{% endif %}">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                Camera {{ prenotazione.camera.numero_camera }} - {{ prenotazione.camera.struttura.nome }}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Check-in:</strong> {{ prenotazione.check_in_date|date:"d/m/Y" }}<br>
+                                <strong>Check-out:</strong> {{ prenotazione.check_out_date|date:"d/m/Y" }}<br>
+                                <strong>Persone:</strong> {{ prenotazione.num_people }}<br>
+                                <strong>Stato:</strong> 
+                                <span class="badge {% if prenotazione.status == 'pending' %}bg-warning{% elif prenotazione.status == 'approved' %}bg-success{% elif prenotazione.status == 'rejected' %}bg-danger{% elif prenotazione.status == 'checked_in' %}bg-info{% elif prenotazione.status == 'checked_out' %}bg-secondary{% elif prenotazione.status == 'cancelled' %}bg-dark{% endif %}">
+                                    {{ prenotazione.get_status_display }}
+                                </span><br>
+                                {% if prenotazione.notes %}
+                                    <strong>Note:</strong> {{ prenotazione.notes }}<br>
+                                {% endif %}
+                                {% if prenotazione.actual_check_in %}
+                                    <strong>Check-in effettuato:</strong> {{ prenotazione.actual_check_in|date:"d/m/Y H:i" }}<br>
+                                {% endif %}
+                                {% if prenotazione.actual_check_out %}
+                                    <strong>Check-out effettuato:</strong> {{ prenotazione.actual_check_out|date:"d/m/Y H:i" }}<br>
+                                {% endif %}
+                            </p>
+                            
+                            {% if user.is_gestore and prenotazione.camera.struttura.gestore == user %}
+                                <form method="post" action="{% url 'prenotazioni:gestisci_prenotazione' prenotazione.id %}" class="d-grid gap-2">
+                                    {% csrf_token %}
+                                    {% if prenotazione.status == 'pending' %}
+                                        <button type="submit" name="azione" value="approva" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i> Approva
+                                        </button>
+                                        <button type="submit" name="azione" value="rifiuta" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-times"></i> Rifiuta
+                                        </button>
+                                    {% elif prenotazione.status == 'approved' and prenotazione.can_check_in %}
+                                        <button type="submit" name="azione" value="check_in" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-sign-in-alt"></i> Check-in
+                                        </button>
+                                    {% elif prenotazione.status == 'checked_in' and prenotazione.can_check_out %}
+                                        <button type="submit" name="azione" value="check_out" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-sign-out-alt"></i> Check-out
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            
+                                <div class="d-grid gap-2">
+                                    {% if prenotazione.can_be_modified %}
+                                        <a href="{% url 'prenotazioni:modifica_prenotazione' prenotazione.id %}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i> Modifica
+                                        </a>
+                                    {% endif %}
+                                    {% if prenotazione.can_be_cancelled %}
+                                        <a href="{% url 'prenotazioni:cancella_prenotazione' prenotazione.id %}" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i> Cancella
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            {% if user.gestore %}
+                Non ci sono prenotazioni da gestire.
+            {% else %}
+                Non hai ancora effettuato nessuna prenotazione.
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if waiting_list %}
+        <h3 class="mt-4">Lista d'attesa</h3>
+        <div class="row">
+            {% for waiting in waiting_list %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Camera {{ waiting.camera.numero_camera }} - {{ waiting.camera.struttura.nome }}</h5>
+                            <p class="card-text">
+                                <strong>Data:</strong> {{ waiting.date|date:"d/m/Y" }}<br>
+                                <strong>Persone:</strong> {{ waiting.num_people }}
+                            </p>
+                            
+                            {% if waiting.notified %}
+                                <div class="alert alert-success mb-3">
+                                    <i class="fas fa-check-circle"></i> Camera disponibile! Puoi procedere con la prenotazione.
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'prenotazioni:nuova_prenotazione' %}?camera={{ waiting.camera.id }}&check_in_date={{ waiting.date|date:'Y-m-d' }}&check_out_date={{ waiting.date|date:'Y-m-d' }}&num_people={{ waiting.num_people }}" class="btn btn-success btn-sm">
+                                        <i class="fas fa-calendar-plus"></i> Prenota ora
+                                    </a>
+                                    <form method="post" action="{% url 'prenotazioni:rimuovi_lista_attesa' waiting.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                            <i class="fas fa-times"></i> Rimuovi dalla lista
+                                        </button>
+                                    </form>
+                                </div>
+                            {% else %}
+                                <form method="post" action="{% url 'prenotazioni:rimuovi_lista_attesa' waiting.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-times"></i> Rimuovi dalla lista
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

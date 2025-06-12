@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar con filtri -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Filtri</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <!-- Campo di ricerca -->
+                        <div class="mb-3">
+                            {{ filter_form.search.label_tag }}
+                            {{ filter_form.search }}
+                        </div>
+
+                        <!-- Tipologia -->
+                        <div class="mb-3">
+                            <label class="form-label">Tipologia struttura</label>
+                            <div class="form-check">
+                                {{ filter_form.tipologia }}
+                            </div>
+                        </div>
+
+                        <!-- Servizi -->
+                        <div class="mb-3">
+                            <label class="form-label">Servizi</label>
+                            <div class="form-check">
+                                {{ filter_form.parcheggio }}
+                                <label class="form-check-label" for="{{ filter_form.parcheggio.id_for_label }}">
+                                    Parcheggio
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                {{ filter_form.piscina }}
+                                <label class="form-check-label" for="{{ filter_form.piscina.id_for_label }}">
+                                    Piscina
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                {{ filter_form.ristorante }}
+                                <label class="form-check-label" for="{{ filter_form.ristorante.id_for_label }}">
+                                    Ristorante
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                {{ filter_form.animali_ammessi }}
+                                <label class="form-check-label" for="{{ filter_form.animali_ammessi.id_for_label }}">
+                                    Animali ammessi
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Ordinamento -->
+                        <div class="mb-3">
+                            <label class="form-label">Ordina per</label>
+                            {{ filter_form.ordina_per }}
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Applica filtri</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista strutture -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Strutture disponibili</h2>
+            <div class="row">
+                {% for struttura in strutture %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        {% if struttura.immagine %}
+                        <img src="{{ struttura.immagine.url }}" class="card-img-top" alt="{{ struttura.nome }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ struttura.nome }}</h5>
+                            <p class="card-text">
+                                <i class="bi bi-geo-alt"></i> {{ struttura.citta }}<br>
+                                <i class="bi bi-building"></i> {{ struttura.get_tipologia_display }}
+                            </p>
+                            <div class="mb-3">
+                                {% if struttura.parcheggio %}
+                                <span class="badge bg-secondary me-1"><i class="bi bi-p-square"></i> Parcheggio</span>
+                                {% endif %}
+                                {% if struttura.piscina %}
+                                <span class="badge bg-info me-1"><i class="bi bi-water"></i> Piscina</span>
+                                {% endif %}
+                                {% if struttura.ristorante %}
+                                <span class="badge bg-warning me-1"><i class="bi bi-cup-hot"></i> Ristorante</span>
+                                {% endif %}
+                                {% if struttura.animali_ammessi %}
+                                <span class="badge bg-success"><i class="bi bi-heart"></i> Pet friendly</span>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'account:dettaglio_struttura_pubblico' struttura.id %}" class="btn btn-outline-success">
+                                Vedi camere
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Nessuna struttura trovata con i filtri selezionati.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

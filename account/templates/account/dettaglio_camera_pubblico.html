@@ -1,0 +1,32 @@
+{% extends 'home.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card" style="max-width: 500px; margin: 0 auto;">
+    {% if camera.immagine %}
+      <img src="{{ camera.immagine.url }}" class="card-img-top" alt="Immagine camera">
+    {% endif %}
+    <div class="card-body">
+      <h4 class="card-title">Camera {{ camera.numero_camera }}</h4>
+      <p><strong>Persone:</strong> {{ camera.numero_persone }}</p>
+      <p><strong>Prezzo:</strong> {{ camera.prezzo_per_notte }} €/notte</p>
+      <p><strong>Descrizione:</strong> {{ camera.descrizione }}</p>
+      <ul class="list-group list-group-flush mb-3">
+        <li class="list-group-item"><strong>Bagno privato:</strong> {{ camera.bagno_privato|yesno:"Sì,No" }}</li>
+        <li class="list-group-item"><strong>Aria condizionata:</strong> {{ camera.aria_condizionata|yesno:"Sì,No" }}</li>
+        <li class="list-group-item"><strong>WiFi:</strong> {{ camera.wifi|yesno:"Sì,No" }}</li>
+        <li class="list-group-item"><strong>TV:</strong> {{ camera.tv|yesno:"Sì,No" }}</li>
+        <li class="list-group-item"><strong>Balcone:</strong> {{ camera.balcone|yesno:"Sì,No" }}</li>
+        <li class="list-group-item"><strong>Vista:</strong> {{ camera.vista|default:"-" }}</li>
+        <li class="list-group-item"><strong>Letto matrimoniale:</strong> {{ camera.letto_matrimoniale|yesno:"Sì,No" }}</li>
+        <li class="list-group-item"><strong>Letti singoli:</strong> {{ camera.letti_singoli }}</li>
+        <li class="list-group-item"><strong>Accessibile disabili:</strong> {{ camera.accessibile_disabili|yesno:"Sì,No" }}</li>
+      </ul>
+      <div class="d-grid gap-2">
+        <a href="{% url 'prenotazioni:nuova_prenotazione' %}?camera={{ camera.id }}&check_in_date={{ check_in_date }}&check_out_date={{ check_out_date }}&num_people={{ num_people }}" class="btn btn-primary">
+          <i class="fas fa-calendar-plus"></i> Prenota ora
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

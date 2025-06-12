@@ -1,0 +1,51 @@
+{% extends 'home.html' %}
+
+{% block title %}Registrati - ToER{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <h2 class="mb-4">Benvenuto su ToER</h2>
+        <p class="lead mb-5">Scegli il tipo di account che desideri creare</p>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title">Sei un gestore di strutture?</h3>
+                        <p class="card-text">Registrati come gestore per inserire la tua struttura sul portale e ricevere prenotazioni.</p>
+                        <ul class="text-start">
+                            <li>Pubblica annunci per la tua struttura</li>
+                            <li>Gestisci le prenotazioni</li>
+                            <li>Configura prezzi e disponibilità</li>
+                            <li>Aggiungi foto e descrizioni dettagliate</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'account:register_gestore' %}" class="btn btn-register-choice btn-lg">Registrati come Gestore</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title">Sei in cerca di alloggio?</h3>
+                        <p class="card-text">Registrati come cliente per prenotare il tuo soggiorno in Emilia Romagna.</p>
+                        <ul class="text-start">
+                            <li>Cerca tra centinaia di strutture</li>
+                            <li>Prenota facilmente online</li>
+                            <li>Gestisci le tue prenotazioni</li>
+                            <li>Ricevi notifiche su disponibilità</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'account:register_cliente' %}" class="btn btn-register-choice btn-lg">Registrati come Cliente</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <p class="mt-4">Hai già un account? <a href="{% url 'account:login' %}">Accedi qui</a></p>
+    </div>
+</div>
+{% endblock %}

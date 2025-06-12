@@ -1,0 +1,104 @@
+{% extends 'home.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card mb-4 shadow-sm" style="max-width: 800px; margin: 0 auto;">
+    <div class="row g-0">
+      <div class="col-md-4 d-flex align-items-center justify-content-center">
+        {% if struttura.immagine %}
+          <img src="{{ struttura.immagine.url }}" class="img-fluid rounded-start" alt="Immagine struttura" style="max-height:150px; object-fit:cover;">
+        {% else %}
+          <img src="https://via.placeholder.com/200x150?text=Nessuna+Immagine" class="img-fluid rounded-start" alt="Nessuna immagine" style="max-height:150px; object-fit:cover;">
+        {% endif %}
+      </div>
+      <div class="col-md-8">
+        <div class="card-body py-3 px-4">
+          <h4 class="card-title mb-2" style="font-size:1.5rem;">{{ struttura.nome }}</h4>
+          <p class="card-text mb-1" style="font-size:1.05rem;"><strong>Città:</strong> {{ struttura.citta }}</p>
+          <p class="card-text mb-1" style="font-size:1.05rem;"><strong>Tipologia:</strong> {{ struttura.get_tipologia_display }}</p>
+          <p class="card-text mb-1" style="font-size:1.05rem;"><strong>Indirizzo:</strong> {{ struttura.indirizzo }}</p>
+          <p class="card-text mb-1" style="font-size:1.05rem;"><strong>Telefono:</strong> {{ struttura.telefono }}</p>
+          <p class="card-text mb-2" style="font-size:1.05rem;"><strong>Descrizione:</strong> {{ struttura.descrizione }}</p>
+          <div class="mb-1">
+            {% if struttura.parcheggio %}<span class="badge bg-success">Parcheggio</span>{% endif %}
+            {% if struttura.piscina %}<span class="badge bg-info text-dark">Piscina</span>{% endif %}
+            {% if struttura.ristorante %}<span class="badge bg-warning text-dark">Ristorante</span>{% endif %}
+            {% if struttura.animali_ammessi %}<span class="badge bg-primary">Animali ammessi</span>{% endif %}
+            {% if struttura.disponibilita %}<span class="badge bg-success">Disponibile</span>{% else %}<span class="badge bg-danger">Non disponibile</span>{% endif %}
+          </div>
+            <a href="{% url 'account:modifica_struttura' struttura.id %}" class="btn btn-sm btn-outline-primary ms-2" >
+                <i class="bi bi-pencil"></i> Modifica struttura
+            </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="mb-3">Camere</h3>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Immagine</th>
+          <th>Numero</th>
+          <th>Persone</th>
+          <th>Prezzo</th>
+          <th>Servizi</th>
+          <th>Disponibilità</th>
+          <th>Azioni</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for camera in camere %}
+        <tr>
+          <td>
+            {% if camera.immagine %}
+              <img src="{{ camera.immagine.url }}" alt="Immagine camera" style="width:60px; border-radius:6px;">
+            {% else %}
+              <img src="https://via.placeholder.com/60x40?text=No+Img" alt="Nessuna immagine" style="width:60px; border-radius:6px;">
+            {% endif %}
+          </td>
+          <td><strong>{{ camera.numero_camera }}</strong></td>
+          <td>{{ camera.numero_persone }}</td>
+          <td>{{ camera.prezzo_per_notte }} €</td>
+          <td>
+            {% if camera.bagno_privato %}<span class="badge bg-secondary">Bagno privato</span>{% endif %}
+            {% if camera.aria_condizionata %}<span class="badge bg-info text-dark">A/C</span>{% endif %}
+            {% if camera.wifi %}<span class="badge bg-success">WiFi</span>{% endif %}
+            {% if camera.tv %}<span class="badge bg-warning text-dark">TV</span>{% endif %}
+            {% if camera.balcone %}<span class="badge bg-primary">Balcone</span>{% endif %}
+            {% if camera.accessibile_disabili %}<span class="badge bg-dark">Accessibile</span>{% endif %}
+            {% if camera.letto_matrimoniale %}<span class="badge bg-light text-dark">Matrimoniale</span>{% endif %}
+            {% if camera.letti_singoli > 0 %}<span class="badge bg-light text-dark">{{ camera.letti_singoli }} Singoli</span>{% endif %}
+            {% if camera.vista %}<span class="badge bg-info text-dark">Vista: {{ camera.vista }}</span>{% endif %}
+          </td>
+          <td>
+            {% if camera.disponibilita %}
+              <span class="badge bg-success">Sì</span>
+            {% else %}
+              <span class="badge bg-danger">No</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'account:modifica_camera' camera.id %}" class="btn btn-sm btn-outline-secondary">
+              <i class="bi bi-pencil"></i> Modifica 
+            </a>
+            <!-- Pulsante elimina camera -->
+            <form method="post" action="{% url 'account:elimina_camera' camera.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Eliminare questa camera?');">
+                <i class="bi bi-trash"></i> Elimina
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="text-center">Nessuna camera inserita.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a href="{% url 'account:dashboard_gestore' %}" class="btn btn-outline-secondary mt-3">Torna alla dashboard</a>
+</div>
+{% endblock %}

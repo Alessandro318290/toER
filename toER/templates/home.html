@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ToER - Trova alloggio in Emilia Romagna{% endblock %}</title>
+    <!-- Bootstrap CSS - manteniamo per compatibilità con funzionalità esistenti -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Stile personalizzato -->
+    <style>
+        /* Reset base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Segoe UI", sans-serif;
+            line-height: 1.6;
+            background: #f9f9f9;
+            color: #333;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 60px; /* Spazio per il footer */
+        }
+        
+        /* Header */
+        header {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #32a866;
+        }
+        
+        nav a {
+            margin-left: 1.5rem;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        nav .btn,
+        .btn-search {
+            background-color: #32a866;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 2px solid #32a866;
+        }
+        
+        nav .btn:hover,
+        .btn-search:hover {
+            background-color: #60f09e;
+            border-color: #60f09e;
+            color: white;
+        }
+
+        .btn-register-choice {
+            background-color: #32a866;
+            color: #fff;
+            border: 2px solid #32a866;
+            border-radius: 8px;
+        }
+        .btn-register-choice:hover,
+        .btn-register-choice:focus {
+            background-color: #60f09e;
+            border-color: #60f09e;
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        /* Hero */
+        .hero {
+            color: #32a866;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+        
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .search-form {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .search-form input,
+        .search-form button {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 2px solid #32a866;
+            border-radius: 5px;
+        }
+        
+        .search-form input {
+            width: 200px;
+        }
+        
+        .search-form input:focus {
+            outline: none;
+            border-color: #60f09e;
+            box-shadow: 0 0 5px rgba(96, 240, 158, 0.5);
+        }
+        
+        .search-form input:hover {
+            border-color: #60f09e;
+        }
+        
+        .search-form button {
+            background-color: #32a866;
+            color: white;
+            cursor: pointer;
+            border: 2px solid #32a866;
+        }
+        
+        .search-form button:hover {
+            background-color: #60f09e;
+            border-color: #60f09e;
+        }
+        
+        /* Messaggio di errore */
+        #errorMessage {
+            color: #d9534f;
+            font-weight: 500;
+            margin-top: 1rem;
+            padding: 0.5rem 0.5rem 0.5rem 2rem;
+            background-color: rgba(217, 83, 79, 0.1);
+            border-radius: 5px;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+        
+        #errorMessage::before {
+            content: "⚠️";
+            position: absolute;
+            left: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #32a866;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            margin-top: 0; /* Override bootstrap style */
+        }
+        
+        /* Login Section */
+        .login {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 70px;
+        }
+        
+        .login-content {
+            padding: 30px 40px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 300px;
+        }
+        
+        .login-form input {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 2px solid #32a866;
+            border-radius: 5px;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: #60f09e;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .login-form input:hover {
+            border-color: #60f09e;
+        }
+        
+        .login-form button {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            background-color: #32a866;
+            color: white;
+            border: 2px solid #32a866;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .login-form button:hover {
+            background-color: #60f09e;
+            border-color: #60f09e;
+        }
+        
+        .login-form .message {
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .login-form .message a {
+            color: #2e8b57;
+            text-decoration: none;
+        }
+        
+        .login-form .message a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Stili aggiuntivi per compatibilità con Bootstrap */
+        .navbar-brand {
+            color: #32a866;
+            font-weight: bold;
+            font-size: 1.8rem;
+        }
+        
+        .navbar-light {
+            background-color: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background-color: #32a866;
+            border-color: #32a866;
+        }
+        
+        .btn-primary:hover {
+            background-color: #60f09e;
+            border-color: #60f09e;
+        }
+        
+        .alert {
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        .auth-form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .custom-alert {
+            font-weight: 500;
+            padding-left: 2.2rem;
+            position: relative;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .custom-alert span {
+            position: absolute;
+            left: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+        }
+
+        .dropdown-menu {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 0.5rem 0;
+            min-width: 180px;
+            border: none;
+        }
+        .dropdown-menu .dropdown-item {
+            color: #333;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+        }
+        .dropdown-menu .dropdown-item:hover,
+        .dropdown-menu .dropdown-item:focus {
+            background-color: transparent !important;
+            color: #32a866;
+
+        }
+        .dropdown-divider {
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* Responsività */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+        
+            .search-form input {
+                width: 100%;
+            }
+        
+            .search-form {
+                flex-direction: column;
+                width: 90%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        
+            #errorMessage {
+                width: 90%;
+            }
+        }
+    
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">ToER</a>
+        </div>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'ricerca:ricerca_strutture' %}">Cerca alloggi</a>
+            {% if user.is_authenticated %}
+                {% if user.is_gestore %}
+                    <a href="{% url 'account:dashboard_gestore' %}">Dashboard Gestore</a>
+                {% else %}
+                    <a href="{% url 'prenotazioni:lista_prenotazioni' %}">Le mie prenotazioni</a>
+                {% endif %}
+                <div class="dropdown" style="display: inline-block;">
+                    <a href="#" class="dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.email }}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'account:profile' %}">Profilo</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'account:logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+            {% else %}
+                <a href="{% url 'account:login' %}">Accedi</a>
+                <a href="{% url 'account:register' %}" class="btn btn-search">Registrati</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div 
+                    class="alert 
+                        {% if 'error' in message.tags or 'danger' in message.tags %}
+                            alert-danger
+                        {% elif 'warning' in message.tags %}
+                            alert-warning
+                        {% elif 'success' in message.tags %}
+                            alert-success
+                        {% else %}
+                            alert-info
+                        {% endif %}
+                        alert-dismissible fade show custom-alert"
+                role="alert">
+                    {% if 'error' in message.tags or 'danger' in message.tags %}
+                        <span style="margin-right:8px;">&#9888;</span>
+                    {% elif 'warning' in message.tags %}
+                        <span style="margin-right:8px;">&#8505;</span>
+                    {% elif 'success' in message.tags %}
+                        <span style="margin-right:8px;">&#9989;</span>
+                    {% else %}
+                        <span style="margin-right:8px;">&#9432;</span>
+                    {% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        <!-- Sezione Hero per la home -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Trova il tuo alloggio perfetto con ToER</h1>
+                <p>Case vacanza, appartamenti e hotel in tutta l'Emilia-Romagna</p>
+                <form class="search-form" id="searchForm" method="get" action="{% url 'ricerca:ricerca_strutture' %}" onsubmit="return validateDates();">
+                    <input type="text" name="citta" id="cittaInput" placeholder="Dove vuoi andare?" autocomplete="off"/>
+                    <input type="text" name="check_in_date" placeholder="Data check-in" onfocus="this.type='date'" onblur="this.type='text'" id="dataCheckIn"/>
+                    <input type="text" name="check_out_date" placeholder="Data check-out" onfocus="this.type='date'" onblur="this.type='text'" id="dataCheckOut"/>
+                    <input type="number" name="num_people" placeholder="Numero di persone" />
+                    <button type="submit">Cerca</button>
+                </form>
+                <div id="errorMessage" style="color: red; margin-top: 10px; display: none;"></div>
+                <div id="suggestions" style="position:relative; z-index:10;"></div>
+            </div>
+        </section>
+        {% endblock %}
+    </div>
+
+
+    <script>
+        function validateDates() {
+            const checkIn = document.getElementById('dataCheckIn').value;
+            const checkOut = document.getElementById('dataCheckOut').value;
+            const errorDiv = document.getElementById('errorMessage');
+            
+            // Reimposta lo stato dell'errore
+            errorDiv.style.display = 'none';
+            
+            // Verifica se entrambe le date sono state inserite
+            if (!checkIn || !checkOut) {
+            errorDiv.textContent = 'Per favore, inserisci entrambe le date di check-in e check-out.';
+            errorDiv.style.display = 'block';
+            return false;
+            }
+            
+            // Converti in oggetti Date per confrontarle
+            const checkInDate = new Date(checkIn);
+            const checkOutDate = new Date(checkOut);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Imposta l'ora a mezzanotte per un confronto corretto
+            
+            // Verifica che la data di check-in non sia nel passato
+            if (checkInDate < today) {
+            errorDiv.textContent = 'La data di check-in non può essere nel passato.';
+            errorDiv.style.display = 'block';
+            return false;
+            }
+            
+            // Verifica che la data di check-out sia successiva a quella di check-in
+            if (checkOutDate <= checkInDate) {
+            errorDiv.textContent = 'La data di check-out deve essere successiva alla data di check-in.';
+            errorDiv.style.display = 'block';
+            return false;
+            }
+            
+            // Se tutto è valido, procedi con la ricerca
+            document.getElementById('searchForm').submit();
+            return true;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('cittaInput');
+            const suggestions = document.getElementById('suggestions');
+
+            input.addEventListener('input', function() {
+                const query = input.value;
+                if (query.length < 2) {
+                    suggestions.innerHTML = '';
+                    return;
+                }
+                fetch('/ricerca/autocomplete/?term=' + encodeURIComponent(query))
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestions.innerHTML = '';
+                        if (data.length > 0) {
+                            const list = document.createElement('ul');
+                            list.style.background = '#fff';
+                            list.style.border = '1px solid #ccc';
+                            list.style.listStyle = 'none';
+                            list.style.padding = '0';
+                            list.style.margin = '0';
+                            list.style.position = 'absolute';
+                            list.style.width = input.offsetWidth + 'px';
+                            data.forEach(item => {
+                                const li = document.createElement('li');
+                                if (item.nome == ''){
+                                    li.textContent = item.citta;
+                                } else {
+                                    li.textContent = item.nome + ' (' + item.citta + ')';
+                                }
+                                li.style.padding = '8px';
+                                li.style.cursor = 'pointer';
+                                li.addEventListener('mousedown', function() {
+                                    // input.value = item.citta;
+                                    if (item.nome == ''){
+                                        input.value = item.citta;
+                                    } else {
+                                        input.value = item.nome;
+                                    }
+                                    suggestions.innerHTML = '';
+                                });
+                                li.addEventListener('mouseenter', function() {
+                                    li.style.backgroundColor = '#f8f9fa';
+                                });
+                                li.addEventListener('mouseleave', function() {
+                                    li.style.backgroundColor = '#fff';
+                                });
+                                list.appendChild(li);
+                            });
+                            suggestions.appendChild(list);
+                        }
+                    });
+            });
+
+            // Chiudi i suggerimenti se clicchi fuori
+            document.addEventListener('click', function(e) {
+                if (!suggestions.contains(e.target) && e.target !== input) {
+                    suggestions.innerHTML = '';
+                }
+            });
+        });
+    </script>
+
+    <!-- Bootstrap JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

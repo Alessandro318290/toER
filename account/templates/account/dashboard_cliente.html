@@ -1,0 +1,47 @@
+{% extends 'home.html' %}
+
+{% block title %}Le mie prenotazioni - ToER{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2>Le mie prenotazioni</h2>
+        <p class="lead">Benvenuto nella tua area personale, {{ user.nome }}!</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="list-group">
+            <a href="{% url 'prenotazioni:lista_prenotazioni' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-calendar-check"></i> Le mie prenotazioni
+            </a>
+            <a href="{% url 'prenotazioni:waiting_list' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-hourglass-split"></i> Liste d'attesa
+            </a>
+            <a href="{% url 'account:profile' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-person"></i> Il mio profilo
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        
+        
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Consigli per il tuo viaggio in Emilia-Romagna</h5>
+            </div>
+            <div class="card-body">
+                <p>L'Emilia-Romagna offre numerose attrazioni turistiche e culturali:</p>
+                <ul>
+                    <li>Visita le città d'arte come Bologna, Parma, Ravenna e Ferrara</li>
+                    <li>Scopri la Motor Valley con i musei Ferrari, Lamborghini e Ducati</li>
+                    <li>Goditi le spiagge della Riviera Romagnola</li>
+                    <li>Assaggia le specialità gastronomiche locali come la piadina, il Parmigiano Reggiano e l'aceto balsamico</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
