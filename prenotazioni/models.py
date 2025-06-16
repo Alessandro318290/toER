@@ -4,7 +4,6 @@ from account.models import Camera
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
-
 # Modelli per la gestione delle prenotazioni
 
 class Notification(models.Model):
