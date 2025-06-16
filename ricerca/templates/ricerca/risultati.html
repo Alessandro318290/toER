@@ -21,7 +21,7 @@
                             <label class="form-label fw-bold mb-2">Tipologia struttura</label>
                             {% for radio in filter_form.tipologia %}
                             <div class="form-check">
-                                {{ radio }}
+                                {{ radio.tag }}
                                 <label class="form-check-label" for="{{ radio.id_for_label }}">
                                     {{ radio.choice_label }}
                                 </label>
